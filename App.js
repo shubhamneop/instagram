@@ -33,6 +33,9 @@ import RegisterScreen from "./components/auth/Register";
 import MainScreen from "./components/Main";
 import AddScreen from "./components/main/Add";
 import SaveScreen from "./components/main/Save";
+import LoginScreen from "./components/auth/Login";
+import Loader from "./components/Loader";
+import CommentScreen from "./components/main/Comment";
 
 const Stack = createStackNavigator();
 
@@ -65,27 +68,16 @@ export class App extends Component {
     const { loggedIn, loaded } = this.state;
 
     if (!loaded) {
-      return (
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text>Loading</Text>
-        </View>
-      );
+      return <Loader loading={loaded} />;
     }
 
     if (!loggedIn) {
       return (
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Landing">
-            <Stack.Screen
-              name="Landing"
-              component={LandingScreen}
-              options={{ headerShow: false }}
-            />
-            <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
-              options={{ headerShow: false }}
-            />
+            <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       );
@@ -108,6 +100,12 @@ export class App extends Component {
             <Stack.Screen
               name="Save"
               component={SaveScreen}
+              navigation={this.props.navigation}
+              options={{ headerShow: false }}
+            />
+            <Stack.Screen
+              name="Comment"
+              component={CommentScreen}
               navigation={this.props.navigation}
               options={{ headerShow: false }}
             />

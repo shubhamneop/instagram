@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Image, Button } from "react-native";
+import { View, Text, TextInput, Image, Button, StyleSheet } from "react-native";
 import firebase from "firebase";
 import { NavigationContainer } from "@react-navigation/native";
+import Loader from "../Loader";
 require("firebase/firestore");
 require("firebase/firebase-storage");
 
 export default function Save(props, { navigation }) {
   const [caption, setCaption] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const uploadImage = async () => {
+    setLoading(true);
     const uri = props.route.params.image;
     const response = await fetch(uri);
 
@@ -33,6 +36,7 @@ export default function Save(props, { navigation }) {
 
     const taskError = (snapshot) => {
       console.log(snapshot);
+      setLoading(false);
     };
     task.on("state_changed", taskProgress, taskError, taskCompleted);
   };
@@ -49,14 +53,17 @@ export default function Save(props, { navigation }) {
         creation: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(function () {
+        setLoading(false);
         props.navigation.popToTop();
       });
   };
 
   return (
     <View style={{ flex: 1 }}>
+      <Loader loading={loading} />
       <Image source={{ uri: props.route.params.image }} style={{ flex: 1 }} />
       <TextInput
+        style={styles.inputStyle}
         placeholder="Write a caption...."
         onChangeText={(caption) => setCaption(caption)}
       />
@@ -64,3 +71,22 @@ export default function Save(props, { navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  inputStyle: {
+    fontSize: 16,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    width: "100%",
+    marginTop: 5,
+    marginBottom: 10,
+    color: "#040707",
+    paddingRight: 30,
+  },
+  view: {
+    marginTop: 15,
+    padding: 15,
+  },
+});
