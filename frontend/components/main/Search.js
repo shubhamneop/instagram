@@ -6,7 +6,12 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  ScrollView
 } from "react-native";
+import colors from '../colors';
+import images from '../../res/images';
+import { Button } from 'native-base';
 
 import firebase from "firebase";
 require("firebase/firestore");
@@ -30,7 +35,7 @@ function Search(props) {
       });
   };
   return (
-    <View style={styles.view}>
+    <ScrollView style={styles.view}>
       <TextInput
         style={styles.inputStyle}
         placeholder="Type here ..."
@@ -42,16 +47,23 @@ function Search(props) {
         horizontal={false}
         data={users}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <TouchableOpacity style={styles.container}
             onPress={() =>
               props.navigation.navigate("Profile", { uid: item.id })
-            }
-          >
-            <Text>{item.name}</Text>
+            }>
+            <View style={styles.nameContainer}>
+              <Image
+                source={{ uri: 'https://picsum.photos/300' }}
+                style={styles.personImage}
+              />
+              <View>
+                <Text style={styles.personName}> {item.name} </Text>
+              </View>
+            </View>
           </TouchableOpacity>
         )}
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -73,5 +85,39 @@ const styles = StyleSheet.create({
   view: {
     marginTop: 15,
     padding: 15,
+  },
+  container: {
+    backgroundColor: colors.background,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    marginBottom: 6,
+    marginStart: 10,
+    marginEnd: 10,
+    alignItems: 'center',
+  },
+  nameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  personImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 30,
+  },
+  personName: {
+    color: colors.text,
+    marginStart: 10,
+    fontWeight: 'bold',
+  },
+  placeName: {
+    color: colors.text,
+    marginStart: 10,
+    fontSize: 12,
+  },
+  iconMore: {
+    height: 15,
+    width: 15,
   },
 });

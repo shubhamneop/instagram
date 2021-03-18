@@ -6,6 +6,7 @@ import {
   Button,
   TextInput,
   StyleSheet,
+  ScrollView
 } from "react-native";
 
 import firebase from "firebase";
@@ -76,13 +77,13 @@ function Comment(props) {
   };
 
   return (
-    <View>
+    <ScrollView>
       <FlatList
         numColumns={1}
         horizontal={false}
         data={comments}
         renderItem={({ item }) => (
-          <View>
+          <View style={styles.comments}>
             {item.user !== undefined ? <Text>{item.user.name}</Text> : null}
             <Text>{item.text}</Text>
           </View>
@@ -96,7 +97,7 @@ function Comment(props) {
         />
         <Button title="Comment" onPress={() => onCommentSend()} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 const mapStateToProps = (store) => ({
@@ -129,4 +130,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
     padding: 15,
   },
+  comments: {
+    marginTop: 5,
+    paddingLeft: 15,
+    borderWidth: 5,
+  }
 });

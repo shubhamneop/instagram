@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image, Button } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
+import { Button } from 'native-base';
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import colors from '../colors';
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export default function Add({ navigation }) {
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -40,6 +43,12 @@ export default function Add({ navigation }) {
     }
   };
 
+  const clearImage = async () => {
+    if (image) {
+      setImage("");
+    }
+  }
+
   if (hasPermission === null || hasGalleryPermission === false) {
     return <View />;
   }
@@ -48,32 +57,59 @@ export default function Add({ navigation }) {
   }
   return (
     <View style={styles.container}>
-      <View style={styles.cameraContainer}>
-        <Camera
-          ref={(ref) => setCamera(ref)}
-          style={styles.fixedRation}
-          type={type}
-          ratio={"1:1"}
-        />
-      </View>
-      <Button
-        title="Flip Image"
-        onPress={() => {
-          setType(
-            type === Camera.Constants.Type.back
-              ? Camera.Constants.Type.front
-              : Camera.Constants.Type.back
-          );
-        }}
-      ></Button>
-      <Button title="Pick Image From Gallary" onPress={() => pickImage()} />
-      <Button title="Take Picture" onPress={() => takePicture()} />
-      <Button
-        title="Save"
-        onPress={() => navigation.navigate("Save", { image })}
-      />
-
-      {image && <Image source={{ uri: image }} style={{ flex: 1 }} />}
+      {image ? (<><Image source={{ uri: image }} style={{ flex: 1 }} />
+        <View style={styles.buttonContainerSave}>
+          <Button bordered dark
+            style={{
+              flex: 1,
+              marginRight: 10,
+              marginLeft: 5,
+              justifyContent: 'center',
+              height: 30,
+              marginTop: 10
+            }} title="Following" onPress={() => navigation.navigate("Save", { image })} >
+            <Text style={{ color: colors.lightBlue }}>Save</Text>
+          </Button>
+          <Button bordered
+            style={{
+              flex: 1,
+              marginRight: 10,
+              marginLeft: 5,
+              justifyContent: 'center',
+              height: 30,
+              marginTop: 10,
+              color: colors.lightRed,
+            }} onPress={() => clearImage()} >
+            <Text style={{ color: colors.lightRed }}>Clear</Text>
+          </Button>
+        </View></>
+      ) :
+        <Camera style={styles.camera} type={type} ref={(ref) => setCamera(ref)}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setType(
+                  type === Camera.Constants.Type.back
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back
+                );
+              }}>
+              <Text style={styles.text}> Flip </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonTake}
+              onPress={() => takePicture()}>
+              <Text style={styles.text}> Take </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonGallery}
+              onPress={() => pickImage()}>
+              <Text style={styles.text}> Pick </Text>
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      }
     </View>
   );
 }
@@ -87,25 +123,41 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    backgroundColor: "transparent",
-    flexDirection: "row",
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
     margin: 20,
   },
   button: {
     flex: 0.1,
-    alignSelf: "flex-end",
-    alignItems: "center",
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  buttonTake: {
+    flex: 0.2,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    position: 'relative',
+    left: Dimensions.get('screen').width / 4,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: colors.light_gray,
+  },
+  buttonGallery: {
+    flex: 0.2,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    position: 'relative',
+    left: Dimensions.get('screen').width / 2.5,
   },
   text: {
     fontSize: 18,
-    color: "white",
+    color: 'white',
   },
-  cameraContainer: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  fixedRation: {
-    flex: 1,
-    aspectRatio: 1,
+  buttonContainerSave: {
+    flex: 0.1,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
+

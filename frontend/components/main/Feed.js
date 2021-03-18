@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, FlatList, StyleSheet, Button } from "react-native";
+import { View, Text, Image, FlatList, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import firebase from "firebase";
 require("firebase/firestore");
+import colors from '../colors';
+import Post from './post/Post';
 
 function Feed(props) {
   const [posts, setPosts] = useState([]);
@@ -61,47 +63,24 @@ function Feed(props) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>
-        {props.userFollowingLoaded} {props.following.length}
-      </Text>
-      <View style={styles.containerGallery}>
-        <FlatList
-          numColumns={1}
-          horizontal={false}
-          data={posts}
-          renderItem={({ item }) => (
-            <View style={styles.containerImage}>
-              <Text style={styles.container}>{item.user.name}</Text>
-              <Image style={styles.image} source={{ uri: item.downloadUrl }} />
-              {getLikeCount(item.user.uid, item.id)}
-              {item.currentUserLike ? (
-                <Button
-                  title="DisLike"
-                  onPress={() => onDislikePress(item.user.uid, item.id)}
-                />
-              ) : (
-                  <Button
-                    title="Like"
-                    onPress={() => onLikePress(item.user.uid, item.id)}
-                  />
-                )}
-              <Text
-                onPress={() =>
-                  props.navigation.navigate("Comment", {
-                    postId: item.id,
-                    uid: item.user.uid,
-                  })
-                }
-              >
-                {" "}
-                View Comments...
-              </Text>
-            </View>
-          )}
-        />
+    <>
+      <View style={styles.container}>
+        <View style={styles.containerGallery}>
+          <FlatList
+            numColumns={1}
+            horizontal={false}
+            data={posts}
+            renderItem={({ item, index }) => (
+              <>
+                <Post post={item} key={index} navigation={props.navigation} />
+                <Text style={{ backgroundColor: colors.white }}></Text>
+              </>
+            )}
+          />
+        </View>
       </View>
-    </View>
+
+    </>
   );
 }
 
@@ -121,6 +100,40 @@ const styles = StyleSheet.create({
   },
   containerImage: {
     flex: 1 / 3,
+  },
+  container: {
+    backgroundColor: colors.background,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    marginBottom: 6,
+    marginStart: 10,
+    marginEnd: 10,
+    alignItems: 'center',
+  },
+  nameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  personImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 30,
+  },
+  personName: {
+    color: colors.text,
+    marginStart: 10,
+    fontWeight: 'bold',
+  },
+  placeName: {
+    color: colors.text,
+    marginStart: 10,
+    fontSize: 12,
+  },
+  iconMore: {
+    height: 15,
+    width: 15,
   },
 });
 
